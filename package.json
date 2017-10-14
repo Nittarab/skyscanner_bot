@@ -1,0 +1,15 @@
+{
+  "name": "hackupc-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "skyscannerbot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node skyscannerbot.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "telegraf": "^3.14.0"
+  }
+}
