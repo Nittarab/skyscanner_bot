@@ -1,8 +1,8 @@
-const rp = require('request-promise');
-const api_url = 'http://partners.api.skyscanner.net/apiservices';
-const api_key = 'ha506416221846351184864905536865';
-var mysql = require('mysql');
-var connection = mysql.createConnection({
+
+
+
+const mysql = require('mysql');
+const connection = mysql.createConnection({
     host: '35.158.224.38',
     user: 'barcellona',
     password: 'barcellona',
@@ -14,7 +14,7 @@ connection.connect((err) => {
     console.log('Connected!');
 });
 
-var db = {};
+const db = {};
 /*db.userAlreadyExist = function (chat_id) {
 
     return new Promise(function (resolve, reject) {
@@ -52,11 +52,12 @@ db.getNearbyAirports = function (lat, long) {
                 resolve(results);
             })
     });
-}
+};
+
 db.connectUserToAirport = function (chat_id, airport_id) {
 
     connection.query("INSERT INTO users_airports(chat_id, airport_id) values(?,?)", [chat_id, airport_id])
-}
+};
 
 db.userLocations = function (user_id) {
     return new Promise(function (resolve, reject) {
@@ -70,13 +71,23 @@ db.userLocations = function (user_id) {
 
 
     // BOOLEAN
-}
+};
+
+db.getAllUserAirports = function() {
+  return new Promise(function (resolve, reject) {
+    connection.query("SELECT DISTINCT iata_code FROM users_airports", function (error, result, fields) {
+      if (error) reject(error);
+      console.log("users airport: ", JSON.stringify(result));
+      resolve(result);
+    })
+  })
+};
 
 
 db.getFlights = function () {
 
     //TODO 
 
-}
+};
 
-module.exports = db
+module.exports = db;

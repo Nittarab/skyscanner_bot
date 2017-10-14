@@ -2,7 +2,7 @@
   "name": "hackupc-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "skyscannerbot.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node skyscannerbot.js"
@@ -11,8 +11,16 @@
   "license": "ISC",
   "dependencies": {
     "telegraf": "^3.14.0",
-    "request-promise":"^4.2.2",
-    "promise":"^8.0.1",
-    "mysql":"^2.15.0"
+    "promise": "^8.0.1",
+    "mysql": "^2.15.0",
+    "fetch-node": "0.0.1",
+    "lodash": "^4.17.4",
+    "moment": "^2.19.1",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
   }
 }
