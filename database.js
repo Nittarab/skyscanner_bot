@@ -9,46 +9,49 @@ var connection = mysql.createConnection({
     database: 'barcellona'
 });
 
-class Database {
+connection.connect((err) => {
+    if (err) throw err;
+    console.log('Connected!');
+  });
 
-    userAlreadyExist(chat_id) {
-        let result = connection.query("SELECT TOP 1 user.chat_id FROM users WHERE user.chat_id  = ?", chat_id)
-        console.log(result)
-        // TODO vedere com'è il result e ritornare di conseguenza
-        // BOOLEAN
+var db = {};
+db.userAlreadyExist = function (chat_id) {
+     connection.query("SELECT count * FROM users WHERE telegram_ID  = ?", [chat_id],)
+      console.log( "aaa: ", result)
+    // TODO vedere com'è il result e ritornare di conseguenza
+    // BOOLEAN
+};
 
-    }
+db.getUserIdFromChatId = function (chat_id) {
+    return connection.query("SELECT users.id FROM users WHERE users.telegram_ID = ?", chat_id)
+}
 
-    getUserIdFromChatId(chat_id) {
-        return connection.query("SELECT user.id FROM users WHERE user.chat_id = ?", chat_id)
-    }
-
-    setUser(chat_id) {
-        if (isUserAlreadyExist == false) {
-            connection.query("INSERT INTO users(chat_id) values(?)", chat_id)
-        }
-    }
-
-    getNearbyAirports(lat, long) {
-        return connection.query()
-    }
-
-    connectUserToAirport(chat_id, airport_id) {
-
-        connection.query("INSERT INTO users_airports(user_id, airport_id) values(?,?)", [getUserIdFromChatId, airport_id])
-    }
-
-    hasUserSetLocation(chat_id) {
-        connection.query("SELECT user.id FORM users")
-
-        // BOOLEAN
-    }
-
-
-    getFlights() {
-
-        //TODO 
-
+db.setUser = function (chat_id) {
+    if (db.userAlreadyExist(chat_id) == false) {
+        connection.query("INSERT INTO users(telegram_ID) values(?)", chat_id)
     }
 }
-module.exports = Database
+
+db.getNearbyAirports = function (lat, long) {
+    return connection.query()
+}
+
+db.connectUserToAirport = function (chat_id, airport_id) {
+
+    connection.query("INSERT INTO users_airports(user_id, airport_id) values(?,?)", [getUserIdFromChatId, airport_id])
+}
+
+db.hasUserSetLocation = function (chat_id) {
+    connection.query("SELECT user.id FORM users")
+
+    // BOOLEAN
+}
+
+
+db.getFlights = function () {
+
+    //TODO 
+
+}
+
+module.exports = db

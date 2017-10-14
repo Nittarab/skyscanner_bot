@@ -9,8 +9,7 @@ const {
   Markup
 } = require('telegraf')
 const bot = new Telegraf('464972549:AAEUgiGOLnwJ277BWHtmkCd0up3rLCey5bI')
-const place_api = 'AIzaSyAjZIef4CunICqGv5yOA0yMvsWnrUNVeOw'
-const Database = require(Database)
+const Database = require('./database')
 
 const aereoports = []
 const user_language_code = 'en'
@@ -27,8 +26,7 @@ app.listen(3000, function () {
 })
 */
 
-bot.use(Telegraf.log())
-
+//bot.use(Telegraf.log())
 
 function sendFlights(chat_id, data) {
   console.log(chat_id)
@@ -40,8 +38,11 @@ function sendFlights(chat_id, data) {
   bot.telegram.sendMessage(chat_id, data.message, linkToFlight)
 }
 
+function log(msg){
+  console.log(msg)
+}
 
-function getLocation(message, text) {
+function getLocation(ctx, message, text) {
   return ctx.reply(message, Extra.markup((markup) => {
     return markup.resize()
       .keyboard([
@@ -51,7 +52,7 @@ function getLocation(message, text) {
 }
 
 function getChatId(ctx) {
-  return ctx.message.chat_id
+  return ctx.update.message.chat.id
 }
 
 
@@ -72,15 +73,16 @@ bot.command('respond_with_aereopots', (ctx) => {
 })
 
 bot.command('/start', (ctx) => {
+  
   chat_id = getChatId(ctx)
-  if (Database.userAlreadyExists(chat_id)) {
+  log("chat id: " + chat_id)
+  if (Database.userAlreadyExist(chat_id)) {
     // sarebbe figo stampargli anche la sua posizione attuale (ovvero g)
-    if (Database.hasUserSetLocation(chat_id)) getLocation("Do you want to change your position?", "Change you position")
-    else getLocation(intro_message, "Set location")
-  }
-  else{
+    if (Database.hasUserSetLocation(chat_id)) getLocation(ctx,"Do you want to change your position?", "Change you position")
+    else getLocation(ctx,intro_message, "Set location")
+  } else {
     Database.setUser(chat_id)
-    getLocation(intro_message, "Set location")
+    getLocation(ctx,intro_message, "Set location")
   }
 
 })
