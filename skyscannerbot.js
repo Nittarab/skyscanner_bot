@@ -22,7 +22,7 @@ module.exports.init = () => {
   bot.use(Telegraf.log());
 
   bot.on('location', (ctx) => {
-    location = ctx.update.message.location;
+    let location = ctx.update.message.location;
     console.log(location);
     Database.getNearbyAirports(location.latitude, location.longitude).then(function (airports) {
       console.log(JSON.stringify(airports));
