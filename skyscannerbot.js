@@ -101,7 +101,7 @@ module.exports.init = () => {
     return "Your airports are:" + s
   }
 
-  function (ctx) {
+  function getChatId(ctx) {
     return ctx.update.message.chat.id
   }
 
