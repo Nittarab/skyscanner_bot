@@ -52,6 +52,7 @@ db.getNearbyAirports = function (lat, long) {
 };
 
 db.connectUserToAirport = function (chat_id, iata_code) {
+    console.log("iata_code:" + iata_code)
     return new Promise(function (resolve, reject) {
         connection.query("INSERT INTO users_airports(chat_id, iata_code) values(?,?)", [chat_id, iata_code], function (error, result, fields) {
             if (error) reject(error);
