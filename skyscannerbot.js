@@ -99,7 +99,7 @@ module.exports.init = () => {
 
       bot.telegram.sendMessage(
         getChatId(ctx),
-        'Some text...',
+        'Done',
         JSON.stringify({
           hide_keyboard: true
         }));
