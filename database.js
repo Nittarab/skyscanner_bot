@@ -37,6 +37,7 @@ const db = {};
 
 }*/
 
+
 db.getNearbyAirports = function (lat, long) {
     return new Promise(function (resolve, reject) {
         connection.query("SELECT name, iata_code, ( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) " +
@@ -64,7 +65,7 @@ db.connectUserToAirport = function (chat_id, iata_code) {
 
 db.userAirports = function (user_id) {
     return new Promise(function (resolve, reject) {
-        connection.query("SELECT users_airports.iata_code, airports.name  FROM users_airports INNER JOIN airports ON users_airports.iata_cose = airports.iata_code WHERE chat_id = ?", chat_id, function (error, result, fields) {
+        connection.query("SELECT users_airports.iata_code, airports.name  FROM users_airports INNER JOIN airports ON users_airports.iata_code = airports.iata_code WHERE chat_id = ?", chat_id, function (error, result, fields) {
             if (error) reject(error);
             console.log("userlocation: ", JSON.stringify(result))
             resolve(result);
@@ -84,6 +85,26 @@ db.getAllUserAirports = function () {
             resolve(result);
         })
     })
+};
+
+
+db.getUsersInterestedInAirport = function(iata_code){
+    return new Promise(function(resolve,reject)
+    {
+      connection.query("SELECT * FROM barcellona.users_airports where iata_code = ?", [iata_code], function (error, result, fields) {
+      if (error) reject(error);
+      resolve(result);
+    })
+  });
+}
+
+
+
+db.getFlights = function () {
+
+    //TODO 
+
+
 };
 
 module.exports = db;
