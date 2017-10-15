@@ -61,67 +61,69 @@ module.exports.init = () => {
     return ctx.answerCallbackQuery(`Oh, ${ctx.match[0]}! Great choise`)
   })*/
 
-  bot.hears('✈️ ', ctx => ctx.reply('Yay!'))
+  bot.hears('✈️ ', ctx => ctx.reply('Yay!'));
   bot.startPolling();
+
+  function getLocation(ctx, message, text) {
+    return ctx.reply(message, Extra.markup((markup) => {
+      return markup.resize()
+        .keyboard([
+          markup.locationRequestButton(text)
+        ])
+    }))
+  }
+
+
+  function selectAirport(ctx, airports, message) {
+    getAirports(airports, ctx);
+    return ctx.reply(message, Extra.markup((markup) => {
+      return markup.resize()
+        .keyboard([
+          ['✈️ ' + airports[0].name, '✈️ ' + airports[1].name, '✈️ ' + airports[2].name],
+          ['✈️ ' + airports[3].name, '✈️ ' + airports[4].name, '✈️ ' + airports[5].name],
+          ['✈️ ' + airports[6].name, '✈️ ' + airports[7].name, '✈️ ' + airports[8].name],
+        ])
+    }))
+  }
+
+  function getAirports(airports, ctx) {
+    airports.forEach(function (airport) {
+      bot.hears('✈️ ' + airport.name, ctx => {
+        console.log("\nsada" + airport.iata_code);
+        Database.userAirports(chat_id).then(function (userAirports) {
+          if (userAirports.map((a) => a.iata_code).includes(airport.iata_code)) bot.telegram.sendMessage(chat_id, "OLRADY HAVE THIS")
+          else {
+            Database.connectUserToAirport(getChatId(ctx), airport.iata_code).then(function (result) {
+              if (userAirports[0] != null) bot.telegram.sendMessage(chat_id, airtportsToString(userAirports))
+            })
+          }
+        })
+      })
+    })
+  }
+
+  function airtportsToString(userAirports) {
+    s = "";
+    userAirports.forEach(function (a) {
+      s += a.nome + '\n'
+    });
+    return "Your airports are:" + s
+  }
+
+  function getChatId(ctx) {
+    return ctx.update.message.chat.id
+  }
 
 };
 
 
 
-function sendFlights(chat_id, data) {
+module.exports.sendFlights = (chat_id, data) => {
   console.log(chat_id);
+
   const linkToFlight = Markup.inlineKeyboard([
     Markup.urlButton("book it", data.link),
   ]).extra();
   bot.telegram.sendMessage(chat_id, data.message, linkToFlight)
-}
+};
 
-function getLocation(ctx, message, text) {
-  return ctx.reply(message, Extra.markup((markup) => {
-    return markup.resize()
-      .keyboard([
-        markup.locationRequestButton(text)
-      ])
-  }))
-}
-
-
-function selectAirport(ctx, airports, message) {
-  getAirports(airports, ctx)
-  return ctx.reply(message, Extra.markup((markup) => {
-    return markup.resize()
-      .keyboard([
-        ['✈️ ' + airports[0].name, '✈️ ' + airports[1].name, '✈️ ' + airports[2].name],
-        ['✈️ ' + airports[3].name, '✈️ ' + airports[4].name, '✈️ ' + airports[5].name],
-        ['✈️ ' + airports[6].name, '✈️ ' + airports[7].name, '✈️ ' + airports[8].name],
-      ])
-  }))
-}
-
-function getAirports(airports, ctx) {
-  airports.forEach(function (airport) {
-    bot.hears('✈️ ' + airport.name, ctx => {
-      console.log("\nsada" + airport.iata_code)
-      Database.userAirports(chat_id).then(function (userAirports) {
-        if (userAirports.map((a) => a.iata_code).includes(airport.iata_code)) bot.telegram.sendMessage(chat_id, "OLRADY HAVE THIS")
-        else {
-          Database.connectUserToAirport(getChatId(ctx), airport.iata_code).then(function (result) {
-            if (userAirports[0] != null) bot.telegram.sendMessage(chat_id, airtportsToString(userAirports))
-          })
-        }
-      })
-    })
-  })
-}
-
-function airtportsToString(userAirports) {
-  s = "";
-  userAirports.forEach(function (a) {
-    s += a.nome + '\n'
-  })
-  return "Your airports are:" + s
-}
-
-function getChatId(ctx) {
-  return ctx.update.message.chat.id
-}
