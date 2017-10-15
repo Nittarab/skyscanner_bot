@@ -1,17 +1,17 @@
 const database = require('./database');
 const skyscannerBot = require('./skyscannerbot');
-
+const flightFinder = require('./flightFinder');
 
 let airportList = [];
 
 
 
 const init = () => {
-  flightCollector();
 
   skyscannerBot.init();
 
-
+  flightCollector();
+  //flightFinder.getFlight(airport);
 };
 
 
