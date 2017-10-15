@@ -67,7 +67,7 @@ db.userAirports = function (user_id) {
     return new Promise(function (resolve, reject) {
         connection.query("SELECT users_airports.iata_code, airports.name  FROM users_airports INNER JOIN airports ON users_airports.iata_code = airports.iata_code WHERE chat_id = ?", chat_id, function (error, result, fields) {
             if (error) reject(error);
-            console.log("userlocation: ", JSON.stringify(result))
+            console.log("userlocation: ", JSON.stringify(result));
             resolve(result);
         })
     })

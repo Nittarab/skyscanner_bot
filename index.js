@@ -8,13 +8,17 @@ let airportList = [];
 
 const init = () => {
 
-  //skyscannerBot.init();
+  skyscannerBot.init();
 
   //flightCollector();
   flightFinder.getFlight('BCN', (travels) => {
 
 
       console.log('viaggi: ', travels);
+      // travels.forEach((travel) => {
+      //   skyscannerBot.sendFlightToAll(travel);
+      // });
+
   });
 
   process.on("unhandledRejection", function(reason, promise) {

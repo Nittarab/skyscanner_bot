@@ -35,12 +35,11 @@ module.exports.init = () => {
 
 
   bot.command('/start', (ctx) => {
-    chat_id =
-      (ctx);
+    let chat_id = getChatId(ctx);
     console.log("chat id: " + chat_id);
     Database.userAirports(chat_id).then(function (userAirports) {
       if (userAirports[0] != null) {
-        airtportsToString(userAirports)
+        airtportsToString(userAirports);
         getLocation(ctx, "Do you want to change your position?", "Change you location")
 
       } else getLocation(ctx, intro_message, "Set location")
@@ -111,16 +110,20 @@ module.exports.init = () => {
 module.exports.sendFlightToAll = function (data) {
 
 
-  data.message = "There is a Flight from: barca is adsada "
-  // TODO sistemare la creazione del messaggio 
+  console.log('data: ', data);
+
+  let message = `${data.going.from.name} ${data.going.to.name} ${data.price} `;
 
   Database.getUsersInterestedInAirport(data.going.from.iata)
     .then((users) => {
       users.forEach((user) => {
-        sendFlightToUser(data, user);
+        sendFlightToUser({link: 'www.google.it', message: 'ciao'}, user);
       })
     })
-}
+    .catch((err) => {
+      console.log('getUsersInterestedInAirport', err);
+    })
+};
 
 
 function sendFlightToUser(data, chat_id) {
