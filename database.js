@@ -37,6 +37,7 @@ const db = {};
 
 }*/
 
+
 db.getNearbyAirports = function (lat, long) {
     return new Promise(function (resolve, reject) {
         connection.query("SELECT name, iata_code, ( 3959 * acos( cos( radians(?) ) * cos( radians( latitude ) ) " +
@@ -90,7 +91,7 @@ db.getAllUserAirports = function () {
 db.getUsersInterestedInAirport = function(iata_code){
     return new Promise(function(resolve,reject)
     {
-      connection.query("SELECT * FROM barcellona.users_airports where iata_code = ?" [iata_code], function (error, result, fields) {
+      connection.query("SELECT * FROM barcellona.users_airports where iata_code = ?", [iata_code], function (error, result, fields) {
       if (error) reject(error);
       resolve(result);
     })

@@ -106,19 +106,22 @@ module.exports.init = () => {
 };
 
 
-module.exports.sendFlightToAll = function(data) {
+module.exports.sendFlightToAll = function (data) {
+  
+
+  data.message = "There is a Flight from: barca is adsada "
+  // TODO sistemare la creazione del messaggio 
+
   Database.getUsersInterestedInAirport(data.going.from.iata)
     .then((users) => {
       users.forEach((user) => {
-        sendFlightToUser(data,user);
+        sendFlightToUser(data, user);
       })
     })
 }
 
 
-
-function sendFlightToUser(data,chatId) {
-  console.log(chat_id);
+function sendFlightToUser(data, chat_id) {
 
   const linkToFlight = Markup.inlineKeyboard([
     Markup.urlButton("book it", data.link),
