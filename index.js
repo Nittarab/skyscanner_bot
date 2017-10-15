@@ -10,7 +10,7 @@ const init = () => {
 
   skyscannerBot.init();
 
-  flightCollector();
+  //flightCollector();
   //flightFinder.getFlight(airport);
 };
 
