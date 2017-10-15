@@ -12,7 +12,7 @@ const validReturn = [];
 let validTravel = [];
 
 
-const getFlight = (airport) => {
+module.exports.getFlight = (airport, callback) => {
 
   rp({
     uri: api_url + `/browsequotes/v1.0/ES/eur/es-ES/${airport}/anywhere/anytime`,
@@ -194,7 +194,8 @@ const getFlight = (airport) => {
       flights.push(res);
     });
 
-    return flights
+    callback(flights);
+
   })
     .catch(function (err) {
       console.log('error:', err)
@@ -215,6 +216,7 @@ const validateTravel = (validGoing, validReturn) => {
   });
 
   return validTravel;
+
 };
 
 
