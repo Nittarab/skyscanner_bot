@@ -84,6 +84,18 @@ db.getAllUserAirports = function() {
 };
 
 
+db.getUsersInterestedInAirport = function(iata_code){
+    return new Promise(function(resolve,reject)
+    {
+      connection.query("SELECT * FROM barcellona.users_airports where iata_code = ?" [iata_code], function (error, result, fields) {
+      if (error) reject(error);
+      resolve(result);
+    })
+  });
+}
+
+
+
 db.getFlights = function () {
 
     //TODO 

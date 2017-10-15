@@ -79,8 +79,17 @@ app.listen(3000, function () {
 */
 
 
+function sendFlightToAll(data) {
+  Database.getUsersInterestedInAirport(data.going.from)
+    .then((users) => {
+      users.forEach((user) => {
+        sendFlightToUser(data,user);
+      })
+    })
+}
 
-function sendFlights(chat_id, data) {
+
+function sendFlightToUser(data,chatId) {
   console.log(chat_id);
 
   const linkToFlight = Markup.inlineKeyboard([
