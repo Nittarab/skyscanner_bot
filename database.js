@@ -57,13 +57,13 @@ db.connectUserToAirport = function (chat_id, iata_code) {
     return new Promise(function (resolve, reject) {
         connection.query("INSERT INTO users_airports(chat_id, iata_code) values(?,?)", [chat_id, iata_code], function (error, result, fields) {
             if (error) reject(error);
-            console.log("insert into: ", result)
+            console.log("insert into: ", result);
             resolve(result);
         })
     })
 };
 
-db.userAirports = function (user_id) {
+db.userAirports = function (chat_id) {
     return new Promise(function (resolve, reject) {
         connection.query("SELECT users_airports.iata_code, airports.name  FROM users_airports INNER JOIN airports ON users_airports.iata_code = airports.iata_code WHERE chat_id = ?", chat_id, function (error, result, fields) {
             if (error) reject(error);

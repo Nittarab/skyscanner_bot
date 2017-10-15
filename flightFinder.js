@@ -200,6 +200,8 @@ module.exports.getFlight = (airport, callback) => {
         flights.push(res);
       });
 
+      console.log('----------------------------------------------------\n');
+
       callback(flights);
     })
     .catch(function (err) {

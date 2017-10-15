@@ -11,7 +11,7 @@ const Database = require('./database');
 const airports = [];
 const user_language_code = 'en';
 
-const intro_message = "Welcome to our bot, we will notify you all the flight under 30€ \n But first send to your position to select some departure airports";
+const intro_message = "Welcome to our bot, we will notify you all the flight \n But first send to your position to select some departure airports";
 const airports_message = "Select the airports that you will be notice";
 const bot = new Telegraf('464972549:AAEUgiGOLnwJ277BWHtmkCd0up3rLCey5bI');
 
@@ -69,35 +69,52 @@ module.exports.init = () => {
         .keyboard([
           ['✈️ ' + airports[0].name, '✈️ ' + airports[1].name, '✈️ ' + airports[2].name],
           ['✈️ ' + airports[3].name, '✈️ ' + airports[4].name, '✈️ ' + airports[5].name],
-          ['✈️ ' + airports[6].name, '✈️ ' + airports[7].name, '✈️ ' + airports[8].name]
-          //['Done']
-        ])
+          ['✈️ ' + airports[6].name, '✈️ ' + airports[7].name, '✈️ ' + airports[8].name],
+          ['Done']
+        ]);
     }))
   }
 
   function getAirports(airports, ctx) {
+    let chat_id = getChatId(ctx);
+
     airports.forEach(function (airport) {
       bot.hears('✈️ ' + airport.name, ctx => {
-        console.log("\nsada" + airport.iata_code);
+
         Database.userAirports(chat_id).then(function (userAirports) {
-          if (userAirports.map((a) => a.iata_code).includes(airport.iata_code)) bot.telegram.sendMessage(chat_id, "you have already select this Airport")
+          if (userAirports.map((a) => a.iata_code).includes(airport.iata_code)) bot.telegram.sendMessage(chat_id, "You have already select this Airport");
           else {
-            Database.connectUserToAirport(
-              (ctx), airport.iata_code).then(function (result) {
-              if (userAirports[0] != null) bot.telegram.sendMessage(chat_id, airtportsToString(userAirports))
-            })
+            Database.connectUserToAirport(getChatId(ctx), airport.iata_code)
+              .then(function (result) {
+                userAirports.push({iata_code: airport.iata_code, name: airport.name});
+                if (userAirports[0]) bot.telegram.sendMessage(chat_id, airtportsToString(userAirports))
+              })
           }
         })
-      })
-    })
+      });
+
+    });
+    bot.hears('Done', ctx => {
+      console.log('ctx', ctx);
+
+      bot.telegram.sendMessage(
+        getChatId(ctx),
+        'Some text...',
+        JSON.stringify({
+          hide_keyboard: true
+        }));
+    });
+
   }
+
+
 
   function airtportsToString(userAirports) {
     s = "";
     userAirports.forEach(function (a) {
       s += a.name + '\n'
     });
-    return "Your airports are:" + s
+    return "Your airports are: \n" + s;
   }
 
   function getChatId(ctx) {
@@ -112,13 +129,17 @@ module.exports.sendFlightToAll = function (data) {
 
   console.log('data: ', data);
 
-  let message = `${data.going.from.name} ${data.going.to.name} ${data.price} `;
+  let message = `${data.going.from.name} - ${data.going.to.name} ${data.price}€ `;
 
   Database.getUsersInterestedInAirport(data.going.from.iata)
     .then((users) => {
+
+      console.log('users: ', users);
+
       users.forEach((user) => {
-        sendFlightToUser({link: 'www.google.it', message: 'ciao'}, user);
+        sendFlightToUser({link: data.link, message: message}, user.chat_id);
       })
+
     })
     .catch((err) => {
       console.log('getUsersInterestedInAirport', err);
@@ -129,7 +150,7 @@ module.exports.sendFlightToAll = function (data) {
 function sendFlightToUser(data, chat_id) {
 
   const linkToFlight = Markup.inlineKeyboard([
-    Markup.urlButton("book it", data.link),
+    Markup.urlButton("Book it", data.link),
   ]).extra();
   bot.telegram.sendMessage(chat_id, data.message, linkToFlight)
 };

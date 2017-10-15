@@ -10,19 +10,23 @@ const init = () => {
 
   skyscannerBot.init();
 
-  //flightCollector();
-  flightFinder.getFlight('BCN', (travels) => {
 
+  //flightCollector();
+
+
+  flightFinder.getFlight('BCN', (travels) => {
+      console.log('cal back');
 
       console.log('viaggi: ', travels);
-      // travels.forEach((travel) => {
-      //   skyscannerBot.sendFlightToAll(travel);
-      // });
+
+      travels.forEach((travel) => {
+        skyscannerBot.sendFlightToAll(travel);
+      });
 
   });
 
   process.on("unhandledRejection", function(reason, promise) {
-    console.log('dio boi dio ', reason);
+    console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~', reason);
     // See Promise.onPossiblyUnhandledRejection for parameter documentation
   });
 };
