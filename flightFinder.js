@@ -1,6 +1,7 @@
 const moment = require('moment');
 const rp = require('request-promise');
 const _ = require('lodash');
+const util = require('util');
 
 const api_url = 'http://partners.api.skyscanner.net/apiservices';
 const api_key = 'ha506416221846351184864905536865';
@@ -145,64 +146,62 @@ module.exports.getFlight = (airport, callback) => {
 
     return redirectPromises;
 
-
   })
     .delay(20000)
     .all().then((travels) => {
 
-    const flights = [];
+      const flights = [];
 
-    travels.forEach((travel) => {
-
-
-      let outboundLeg = travel.Legs.find((leg) => (leg.Id === travel.Itineraries[0].OutboundLegId));
-      let inboundLeg = travel.Legs.find((leg) => (leg.Id === travel.Itineraries[0].InboundLegId));
-
-      let goingFromPlace = travel.Places.find((place) => {return (place.Id == travel.Query.OriginPlace)});
-      let goingFrom = {
-        iata: goingFromPlace.Code,
-        name: goingFromPlace.Name
-      };
-      let goingToPlace = travel.Places.find((place) => {return (place.Id == travel.Query.DestinationPlace)});
-      let goingTo = {
-        iata: goingToPlace.Code,
-        name: goingToPlace.Name
-      };
-      let returnFrom = goingTo;
-      let returnTo = goingFrom;
+      travels.forEach((travel) => {
 
 
-      let res = {
-        going: {
-          from: goingFrom,
-          to: goingTo,
-          departure: outboundLeg.Departure,
-          arrival: outboundLeg.Arrival,
-          flightId: {
-            flightNumber: outboundLeg.FlightNumbers[0].FlightNumber,
-            carrierId: outboundLeg.FlightNumbers[0].CarrierId
-          }
-        },
-        return: {
-          from: returnFrom,
-          to: returnTo,
-          departure: inboundLeg.Departure,
-          arrival: inboundLeg.Arrival,
-          flightId: {
-            flightNumber: inboundLeg.FlightNumbers[0].FlightNumber,
-            carrierId: inboundLeg.FlightNumbers[0].CarrierId
-          }
-        },
-        price: travel.Itineraries[0].PricingOptions[0].Price,
-        link: travel.Itineraries[0].PricingOptions[0].DeeplinkUrl
-      };
+        let outboundLeg = travel.Legs.find((leg) => (leg.Id === travel.Itineraries[0].OutboundLegId));
+        let inboundLeg = travel.Legs.find((leg) => (leg.Id === travel.Itineraries[0].InboundLegId));
 
-      flights.push(res);
-    });
+        let goingFromPlace = travel.Places.find((place) => {return (place.Id == travel.Query.OriginPlace)});
+        let goingFrom = {
+          iata: goingFromPlace.Code,
+          name: goingFromPlace.Name
+        };
+        let goingToPlace = travel.Places.find((place) => {return (place.Id == travel.Query.DestinationPlace)});
+        let goingTo = {
+          iata: goingToPlace.Code,
+          name: goingToPlace.Name
+        };
+        let returnFrom = goingTo;
+        let returnTo = goingFrom;
 
-    callback(flights);
 
-  })
+        let res = {
+          going: {
+            from: goingFrom,
+            to: goingTo,
+            departure: outboundLeg.Departure,
+            arrival: outboundLeg.Arrival,
+            flightId: {
+              flightNumber: outboundLeg.FlightNumbers[0].FlightNumber,
+              carrierId: outboundLeg.FlightNumbers[0].CarrierId
+            }
+          },
+          return: {
+            from: returnFrom,
+            to: returnTo,
+            departure: inboundLeg.Departure,
+            arrival: inboundLeg.Arrival,
+            flightId: {
+              flightNumber: inboundLeg.FlightNumbers[0].FlightNumber,
+              carrierId: inboundLeg.FlightNumbers[0].CarrierId
+            }
+          },
+          price: travel.Itineraries[0].PricingOptions[0].Price,
+          link: travel.Itineraries[0].PricingOptions[0].DeeplinkUrl
+        };
+
+        flights.push(res);
+      });
+
+      callback(flights);
+    })
     .catch(function (err) {
       console.log('error:', err)
     });
