@@ -1,6 +1,3 @@
-
-
-
 const mysql = require('mysql');
 const connection = mysql.createConnection({
     host: '35.158.224.38',
@@ -54,14 +51,20 @@ db.getNearbyAirports = function (lat, long) {
     });
 };
 
-db.connectUserToAirport = function (chat_id, airport_id) {
-
-    connection.query("INSERT INTO users_airports(chat_id, airport_id) values(?,?)", [chat_id, airport_id])
+db.connectUserToAirport = function (chat_id, iata_code) {
+    console.log("iata_code:" + iata_code)
+    return new Promise(function (resolve, reject) {
+        connection.query("INSERT INTO users_airports(chat_id, iata_code) values(?,?)", [chat_id, iata_code], function (error, result, fields) {
+            if (error) reject(error);
+            console.log("insert into: ", result)
+            resolve(result);
+        })
+    })
 };
 
-db.userLocations = function (user_id) {
+db.userAirports = function (user_id) {
     return new Promise(function (resolve, reject) {
-        connection.query("SELECT iata_code FROM users_airports WHERE chat_id = ?", chat_id, function (error, result, fields) {
+        connection.query("SELECT users_airports.iata_code, airports.name  FROM users_airports INNER JOIN airports ON users_airports.iata_cose = airports.iata_code WHERE chat_id = ?", chat_id, function (error, result, fields) {
             if (error) reject(error);
             console.log("userlocation: ", JSON.stringify(result))
             resolve(result);
@@ -73,14 +76,14 @@ db.userLocations = function (user_id) {
     // BOOLEAN
 };
 
-db.getAllUserAirports = function() {
-  return new Promise(function (resolve, reject) {
-    connection.query("SELECT DISTINCT iata_code FROM users_airports", function (error, result, fields) {
-      if (error) reject(error);
-      console.log("users airport: ", JSON.stringify(result));
-      resolve(result);
+db.getAllUserAirports = function () {
+    return new Promise(function (resolve, reject) {
+        connection.query("SELECT DISTINCT iata_code FROM users_airports", function (error, result, fields) {
+            if (error) reject(error);
+            console.log("users airport: ", JSON.stringify(result));
+            resolve(result);
+        })
     })
-  })
 };
 
 
@@ -99,6 +102,7 @@ db.getUsersInterestedInAirport = function(iata_code){
 db.getFlights = function () {
 
     //TODO 
+
 
 };
 

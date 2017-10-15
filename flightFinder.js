@@ -31,9 +31,6 @@ module.exports.getFlight = (airport, callback) => {
       let inboundPromises = [];
 
       filtered.forEach((quote) => {
-        let arriveCity = repos.Places.find((place) => {
-          return place.PlaceId === quote.OutboundLeg.DestinationId
-        }).CityName || 'not an airport';
         let arriveAirport = repos.Places.find((place) => {
           return place.PlaceId === quote.OutboundLeg.DestinationId
         }).IataCode || 'not an airport';
@@ -70,9 +67,6 @@ module.exports.getFlight = (airport, callback) => {
     if (filtered.length <= 0) throw new Error('Nessun volo di ritorno trovato');
 
     filtered.Quotes.forEach((quote) => {
-      let arriveCity = filtered.Places.find((place) => {
-        return place.PlaceId === quote.OutboundLeg.OriginId
-      }).CityName || 'not an airport';
       let arriveAirport = filtered.Places.find((place) => {
         return place.PlaceId === quote.OutboundLeg.OriginId
       }).IataCode || '';
@@ -164,28 +158,40 @@ module.exports.getFlight = (airport, callback) => {
       let outboundLeg = travel.Legs.find((leg) => (leg.Id === travel.Itineraries[0].OutboundLegId));
       let inboundLeg = travel.Legs.find((leg) => (leg.Id === travel.Itineraries[0].InboundLegId));
 
-      let goingFrom = travel.Places.find((place) => {
-        return (place.Id == travel.Query.OriginPlace)
-      }).Code;
-      let goingTo = travel.Places.find((place) => {
-        return (place.Id == travel.Query.DestinationPlace)
-      }).Code;
+      let goingFromPlace = travel.Places.find((place) => {return (place.Id == travel.Query.OriginPlace)});
+      let goingFrom = {
+        iata: goingFromPlace.Code,
+        name: goingFromPlace.Name
+      };
+      let goingToPlace = travel.Places.find((place) => {return (place.Id == travel.Query.DestinationPlace)});
+      let goingTo = {
+        iata: goingToPlace.Code,
+        name: goingToPlace.Name
+      };
       let returnFrom = goingTo;
       let returnTo = goingFrom;
 
 
       let res = {
         going: {
-          from: goingFrom, //BTC
-          to: goingTo, //ETH
+          from: goingFrom,
+          to: goingTo,
           departure: outboundLeg.Departure,
-          arrival: outboundLeg.Arrival
+          arrival: outboundLeg.Arrival,
+          flightId: {
+            flightNumber: outboundLeg.FlightNumbers[0].FlightNumber,
+            carrierId: outboundLeg.FlightNumbers[0].CarrierId
+          }
         },
         return: {
           from: returnFrom,
           to: returnTo,
           departure: inboundLeg.Departure,
-          arrival: inboundLeg.Arrival
+          arrival: inboundLeg.Arrival,
+          flightId: {
+            flightNumber: inboundLeg.FlightNumbers[0].FlightNumber,
+            carrierId: inboundLeg.FlightNumbers[0].CarrierId
+          }
         },
         price: travel.Itineraries[0].PricingOptions[0].Price,
         link: travel.Itineraries[0].PricingOptions[0].DeeplinkUrl
