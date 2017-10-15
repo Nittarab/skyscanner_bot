@@ -12,6 +12,8 @@ const init = () => {
 
   //flightCollector();
   flightFinder.getFlight('BCN', (travels) => {
+
+
       console.log('viaggi: ', travels);
   });
 };
