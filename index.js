@@ -18,7 +18,7 @@ const init = () => {
   });
 
   process.on("unhandledRejection", function(reason, promise) {
-    console.log('dio boi dio ', reason, promise);
+    console.log('dio boi dio ', reason);
     // See Promise.onPossiblyUnhandledRejection for parameter documentation
   });
 };
