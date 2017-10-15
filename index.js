@@ -8,7 +8,7 @@ let airportList = [];
 
 const init = () => {
 
-  //skyscannerBot.init();
+  skyscannerBot.init();
 
   //flightCollector();
   flightFinder.getFlight('BCN', (travels) => {
